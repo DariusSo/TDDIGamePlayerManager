@@ -1,14 +1,14 @@
 import org.example.IGamePlayerManager;
+import org.example.IGamePlayerManagerImpl;
 import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class Tests{
-    static IGamePlayerManager iGamePlayerManager;
+    static IGamePlayerManager iGamePlayerManagerImpl;
     private final PrintStream standardOut = System.out;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
 
@@ -18,8 +18,8 @@ public class Tests{
         String playerName = "Name";
         String playerId = "1";
         //Act
-        iGamePlayerManager.registerPlayer(playerId, playerName);
-        String addedPlayer = iGamePlayerManager.getPlayerDetails(playerId);
+        iGamePlayerManagerImpl.registerPlayer(playerId, playerName);
+        String addedPlayer = iGamePlayerManagerImpl.getPlayerDetails(playerId);
         //Assert
         assertEquals(playerName, addedPlayer);
     }
@@ -29,8 +29,8 @@ public class Tests{
         String playerName = "Name";
         String playerId = "1";
         //Act
-        iGamePlayerManager.registerPlayer(playerId, playerName);
-        iGamePlayerManager.registerPlayer(playerId, playerName);
+        iGamePlayerManagerImpl.registerPlayer(playerId, playerName);
+        iGamePlayerManagerImpl.registerPlayer(playerId, playerName);
         //Assert
         assertEquals("Toks zaidejo id jau egzistuoja\r\n", outputStreamCaptor.toString());
     }
@@ -38,10 +38,10 @@ public class Tests{
     public void checkIfGetPlayerDetailsReturnsCorrectNameById(){
         //Arrange
         String playerId = "1";
-        iGamePlayerManager.registerPlayer(playerId, "Name");
-        iGamePlayerManager.registerPlayer("2", "Name1");
+        iGamePlayerManagerImpl.registerPlayer(playerId, "Name");
+        iGamePlayerManagerImpl.registerPlayer("2", "Name1");
         //Act
-        String playerName = iGamePlayerManager.getPlayerDetails(playerId);
+        String playerName = iGamePlayerManagerImpl.getPlayerDetails(playerId);
         //Assert
         assertEquals("Name", playerName);
     }
@@ -50,21 +50,20 @@ public class Tests{
         //Arrange
         String playerId = "9999999LBM";
         //Act
-        iGamePlayerManager.registerPlayer(playerId, "Name");
-        iGamePlayerManager.getPlayerDetails(playerId);
+        iGamePlayerManagerImpl.getPlayerDetails(playerId);
         //Assert
         assertEquals("Zaidejo su tokiu id nera\r\n", outputStreamCaptor.toString());
     }
     @Test
     public void checkIfUpdatePlayerScoreAddsScoreWhenByLevelingUp(){
         //Arrange
-        iGamePlayerManager.registerPlayer("1", "Name");
-        iGamePlayerManager.registerPlayer("2", "Name1");
-        iGamePlayerManager.updatePlayerScore("1", 9);
-        iGamePlayerManager.updatePlayerScore("2", 10);
+        iGamePlayerManagerImpl.registerPlayer("1", "Name");
+        iGamePlayerManagerImpl.registerPlayer("2", "Name1");
+        iGamePlayerManagerImpl.updatePlayerScore("1", 9);
+        iGamePlayerManagerImpl.updatePlayerScore("2", 10);
         //Act
-        boolean player1 = iGamePlayerManager.checkLevelUp("1");
-        boolean player2 = iGamePlayerManager.checkLevelUp("2");
+        boolean player1 = iGamePlayerManagerImpl.checkLevelUp("1");
+        boolean player2 = iGamePlayerManagerImpl.checkLevelUp("2");
         //Assert
         assertFalse(player1);
         assertTrue(player2);
@@ -74,7 +73,7 @@ public class Tests{
         //Arrange
         String playerId = "7aer1";
         //Act
-        iGamePlayerManager.updatePlayerScore(playerId, 15);
+        iGamePlayerManagerImpl.updatePlayerScore(playerId, 15);
         //Assert
         assertEquals("Zaidejo su tokiu id nera\r\n", outputStreamCaptor.toString());
     }
@@ -84,30 +83,30 @@ public class Tests{
         //Arrange
         String playerId = "1";
         int playerScore = 10;
-        iGamePlayerManager.registerPlayer(playerId, "Name");
+        iGamePlayerManagerImpl.registerPlayer(playerId, "Name");
         //Act
-        iGamePlayerManager.updatePlayerScore(playerId, playerScore);
+        iGamePlayerManagerImpl.updatePlayerScore(playerId, playerScore);
         //Assert
-        assertTrue(iGamePlayerManager.checkLevelUp(playerId));
+        assertTrue(iGamePlayerManagerImpl.checkLevelUp(playerId));
     }
     @Test
     public void checkIfCheckLevelUpReturnsFalseWhenBelow10Points(){
         //Arrange
         String playerId = "1";
         int playerScore = 9;
-        iGamePlayerManager.registerPlayer(playerId, "Name");
+        iGamePlayerManagerImpl.registerPlayer(playerId, "Name");
         //Act
-        iGamePlayerManager.updatePlayerScore(playerId, playerScore);
+        iGamePlayerManagerImpl.updatePlayerScore(playerId, playerScore);
         //Assert
-        assertFalse(iGamePlayerManager.checkLevelUp(playerId));
+        assertFalse(iGamePlayerManagerImpl.checkLevelUp(playerId));
     }
     @Test
     public void checkIfDeletePlayerReturnsTrueAndcheckIfRemoved(){
         //Arrange
-        iGamePlayerManager.registerPlayer("1", "Name");
+        iGamePlayerManagerImpl.registerPlayer("1", "Name");
         //Act
-        boolean deleted = iGamePlayerManager.deletePlayer("1");
-        iGamePlayerManager.getPlayerDetails("1");
+        boolean deleted = iGamePlayerManagerImpl.deletePlayer("1");
+        iGamePlayerManagerImpl.getPlayerDetails("1");
         //Assert
         assertTrue(deleted);
         assertEquals("Zaidejo su tokiu id nera\r\n", outputStreamCaptor.toString());
@@ -116,14 +115,14 @@ public class Tests{
     @Test
     public void checkIfDeletePlayerReturnsFalse(){
         //Act
-        boolean deleted = iGamePlayerManager.deletePlayer("d4412");
+        boolean deleted = iGamePlayerManagerImpl.deletePlayer("d4412");
         //Assert
         assertFalse(deleted);
     }
 
-
     @BeforeEach
     public void setUp() {
+        iGamePlayerManagerImpl = new IGamePlayerManagerImpl();
         System.setOut(new PrintStream(outputStreamCaptor));
     }
 
